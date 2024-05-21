@@ -22,7 +22,8 @@
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo typecheck",
-    "ui-add": "pnpm -F ui ui-add"
+    "ui-add": "pnpm -F ui ui-add",
+    "deploy": "turbo deploy --concurrency 1"
   },
   "devDependencies": {
     "@classroom/prettier-config": "workspace:*",

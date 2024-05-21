@@ -1,3 +1,4 @@
+import type { ServerBuild } from "@remix-run/cloudflare";
 import { createRequestHandler } from "@remix-run/cloudflare";
 import __STATIC_CONTENT_MANIFEST from "__STATIC_CONTENT_MANIFEST";
 import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
@@ -7,7 +8,9 @@ import * as remixBuild from "./build/server";
 import { getLoadContext } from "./load-context.js";
 
 const MANIFEST = JSON.parse(__STATIC_CONTENT_MANIFEST) as string;
-const handleRemixRequest = createRequestHandler(remixBuild);
+const handleRemixRequest = createRequestHandler(
+  remixBuild as unknown as ServerBuild,
+);
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
