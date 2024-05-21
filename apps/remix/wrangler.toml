@@ -6,8 +6,11 @@ workers_dev = true
 compatibility_date = "2023-04-20"
 
 services = [
-  { binding = "AUTH", service = "auth-service" }
+  { binding = "AUTH", service = "classroom-service-auth" }
 ]
+
+[placement]
+mode = "smart"
 
 [site]
 bucket = "./build/client"

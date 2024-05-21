@@ -1,12 +1,15 @@
 #: schema https://github.com/cloudflare/workers-sdk/files/12887590/wrangler.schema.json
-name = "auth-service"
+name = "classroom-service-auth"
 main = "src/index.ts"
 compatibility_date = "2024-05-12"
 compatibility_flags = ["nodejs_compat"]
 
 services = [
-  { binding = "ARGON2", service = "argon2-service" }
+  { binding = "ARGON2", service = "classroom-service-argon2" }
 ]
+
+[placement]
+mode = "smart"
 
 [vars]
 SESSION_LIFETIME = { days = 30 }

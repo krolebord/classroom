@@ -19,5 +19,8 @@
   "tailwindCSS.experimental.configFile": "./config/tailwind/web.ts",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "rust-analyzer.linkedProjects": ["./services/argon2/Cargo.toml"]
+  "rust-analyzer.linkedProjects": ["./services/argon2/Cargo.toml"],
+
+  "files.insertFinalNewline": true,
+  "files.eol": "\n"
 }
