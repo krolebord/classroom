@@ -1,0 +1,36 @@
+{
+  "name": "@classroom/auth",
+  "version": "0.0.0",
+  "private": true,
+  "prettier": "@classroom/prettier-config",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler --persist-to=\"../../.data\" dev",
+    "build": "wrangler deploy --dry-run",
+    "cf-typegen": "wrangler types",
+    "clean": "rm -rf .turbo node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@classroom/db": "workspace:*",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@classroom/argon2": "workspace:*",
+    "@classroom/eslint-config": "workspace:*",
+    "@classroom/prettier-config": "workspace:*",
+    "@classroom/tsconfig": "workspace:*",
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "eslint": "^9.2.0",
+    "typescript": "^5.4.5",
+    "wrangler": "^3.57.0"
+  }
+}

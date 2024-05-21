@@ -1,0 +1,17 @@
+#: schema https://github.com/cloudflare/workers-sdk/files/12887590/wrangler.schema.json
+name = "auth-service"
+main = "src/index.ts"
+compatibility_date = "2024-05-12"
+compatibility_flags = ["nodejs_compat"]
+
+services = [
+  { binding = "ARGON2", service = "argon2-service" }
+]
+
+[vars]
+SESSION_LIFETIME = { days = 30 }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "classroom-prod"
+database_id = "1c112361-3257-4c41-ad7d-58d766bdb20f"

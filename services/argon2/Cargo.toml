@@ -1,0 +1,26 @@
+[package]
+name = "classroom-argon2"
+version = "0.1.0"
+edition = "2021"
+
+# https://github.com/rustwasm/wasm-pack/issues/1247
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
+[package.metadata.release]
+release = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+argon2 = "0.5.3"
+getrandom = { version = "0.2.15", features = ["js"] }
+rand_core = { version = "0.6.4", features = ["std"] }
+worker = "0.2.0"
+wasm-bindgen="0.2"
+
+[profile.release]
+lto = true
+strip = true
+codegen-units = 1

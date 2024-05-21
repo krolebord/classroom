@@ -1,0 +1,17 @@
+#: schema https://github.com/cloudflare/workers-sdk/files/12887590/wrangler.schema.json
+name = "classroom-db"
+
+workers_dev = false
+compatibility_date = "2023-04-20"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "classroom-prod"
+database_id = "1c112361-3257-4c41-ad7d-58d766bdb20f"
+
+[env.preview]
+name = "preview"
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "classroom-preview"
+database_id = "2545125e-68fa-4dba-9b48-bc3f56c8fc26"

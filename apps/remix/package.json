@@ -1,0 +1,52 @@
+{
+  "name": "@classroom/remix",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "prettier": "@classroom/prettier-config",
+  "scripts": {
+    "build": "NODE_OPTIONS='--import tsx' remix vite:build",
+    "dev": "NODE_OPTIONS='--import tsx' remix vite:dev",
+    "start": "wrangler dev --persist-to=\"../../.data\" ./server.ts",
+    "clean": "rm -rf .turbo node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "cf-typegen": "wrangler types",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@classroom/db": "workspace:*",
+    "@cloudflare/kv-asset-handler": "^0.3.2",
+    "@remix-run/cloudflare": "^2.9.2",
+    "@remix-run/react": "^2.9.2",
+    "@remix-run/server-runtime": "*",
+    "isbot": "^4.1.0",
+    "miniflare": "^3.20240512.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remix-auth": "^3.6.0",
+    "remix-utils": "^7.6.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@classroom/auth": "workspace:*",
+    "@classroom/eslint-config": "workspace:*",
+    "@classroom/prettier-config": "workspace:*",
+    "@classroom/tailwind-config": "workspace:*",
+    "@classroom/tsconfig": "workspace:*",
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "@remix-run/dev": "^2.9.2",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^9.2.0",
+    "node-fetch": "^3.3.2",
+    "tsx": "^4.10.5",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "wrangler": "^3.57.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

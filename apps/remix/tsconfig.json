@@ -1,0 +1,27 @@
+{
+  "extends": "@classroom/tsconfig/base.json",
+  "include": [
+    "env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/.server/**/*.ts",
+    "**/.server/**/*.tsx",
+    "**/.client/**/*.ts",
+    "**/.client/**/*.tsx"
+  ],
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "types": [
+      "@remix-run/cloudflare",
+      "vite/client",
+      "@cloudflare/workers-types"
+    ],
+
+    "jsx": "react-jsx",
+    "forceConsistentCasingInFileNames": true,
+
+    "baseUrl": ".",
+
+    "noEmit": true
+  }
+}

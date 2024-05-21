@@ -1,0 +1,19 @@
+{
+  "name": "@classroom/argon2",
+  "version": "1.0.0",
+  "private": true,
+  "prettier": "@classroom/prettier-config",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy",
+    "clean": "rm -rf .turbo node_modules",
+    "format": "prettier --check . --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "miniflare": "^3.20240512.0",
+    "wrangler": "^3.57.0",
+    "@classroom/prettier-config": "workspace:*",
+    "@classroom/tsconfig": "workspace:*"
+  }
+}

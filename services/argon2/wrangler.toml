@@ -1,0 +1,6 @@
+name = "argon2-service"
+main = "build/worker/shim.mjs"
+compatibility_date = "2024-05-18"
+
+[build]
+command = "cargo install -q worker-build && worker-build --release"
