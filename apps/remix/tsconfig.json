@@ -1,6 +1,7 @@
 {
   "extends": "@classroom/tsconfig/base.json",
   "include": [
+    "reset.d.ts",
     "env.d.ts",
     "**/*.ts",
     "**/*.tsx",
@@ -14,7 +15,8 @@
     "types": [
       "@remix-run/cloudflare",
       "vite/client",
-      "@cloudflare/workers-types"
+      "@cloudflare/workers-types",
+      "@remix-run/react/future/single-fetch.d.ts"
     ],
 
     "jsx": "react-jsx",

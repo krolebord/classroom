@@ -12,7 +12,7 @@
   },
   "scripts": {
     "deploy": "wrangler deploy",
-    "dev": "wrangler --persist-to=\"../../.data\" dev",
+    "dev": "wrangler dev --persist-to=\"../../.data\"",
     "build": "wrangler deploy --dry-run",
     "cf-typegen": "wrangler types",
     "clean": "rm -rf .turbo node_modules",

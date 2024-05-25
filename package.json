@@ -32,5 +32,10 @@
     "turbo": "1.13.3",
     "typescript": "^5.4.5"
   },
-  "prettier": "@classroom/prettier-config"
+  "prettier": "@classroom/prettier-config",
+  "pnpm": {
+    "patchedDependencies": {
+      "@conform-to/dom@1.1.3": "patches/@conform-to__dom@1.1.3.patch"
+    }
+  }
 }

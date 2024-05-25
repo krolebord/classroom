@@ -2,6 +2,7 @@ import {
   vitePlugin as remix,
   cloudflareDevProxyVitePlugin as remixCloudflareDevProxy,
 } from "@remix-run/dev";
+import { flatRoutes } from "remix-flat-routes";
 import { defineConfig } from "vite";
 
 import { getLoadContext } from "./load-context.js";
@@ -11,10 +12,29 @@ export default defineConfig({
     remixCloudflareDevProxy({
       getLoadContext,
       persist: {
-        path: "../../.data",
+        path: "../../.data/v3",
       },
     }),
-    remix(),
+    remix({
+      serverModuleFormat: "esm",
+      future: {
+        v3_fetcherPersist: true,
+        v3_relativeSplatPath: true,
+        v3_throwAbortReason: true,
+        unstable_singleFetch: true,
+      },
+      routes: async (defineRoutes) =>
+        flatRoutes("routes", defineRoutes, {
+          ignoredRouteFiles: [
+            ".*",
+            "**/*.css",
+            "**/*.test.{js,jsx,ts,tsx}",
+            "**/__*.*",
+            "**/*.server.*",
+            "**/*.client.*",
+          ],
+        }),
+    }),
   ],
   ssr: {
     resolve: {

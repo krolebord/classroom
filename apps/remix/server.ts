@@ -53,7 +53,7 @@ export default {
       });
       return await handleRemixRequest(request, context);
     } catch (error) {
-      console.log(error);
+      console.log("server error", error);
       return new Response("An unexpected error occurred", { status: 500 });
     }
   },

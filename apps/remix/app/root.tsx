@@ -1,3 +1,4 @@
+import type { LinksFunction } from "@remix-run/server-runtime";
 import {
   Links,
   Meta,
@@ -5,6 +6,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+
+import tailwind from "./tailwind.css?url";
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: tailwind },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

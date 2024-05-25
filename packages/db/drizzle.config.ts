@@ -1,10 +1,7 @@
 import type { Config } from "drizzle-kit";
+import { config } from "dotenv";
 
-const {
-  LOCAL_DB_PATH,
-  WRANGLER_CONFIG,
-  DB_NAME = "classroom-prod",
-} = process.env;
+const { LOCAL_DB_PATH, ACCOUNT_ID, DATABASE_ID, ACCOUNT_TOKEN } = process.env;
 
 export default LOCAL_DB_PATH
   ? ({
@@ -18,15 +15,10 @@ export default LOCAL_DB_PATH
       schema: "./src/schema.ts",
       out: "./migrations",
       dialect: "sqlite",
-      driver: "d1",
+      driver: "d1-http",
       dbCredentials: {
-        wranglerConfigPath:
-          new URL("wrangler.toml", import.meta.url).pathname +
-          // This is a hack to inject additional cli flags to wrangler
-          // since drizzle-kit doesn't support specifying environments
-          WRANGLER_CONFIG
-            ? ` ${WRANGLER_CONFIG}`
-            : "",
-        dbName: DB_NAME,
+        accountId: ACCOUNT_ID!,
+        databaseId: DATABASE_ID!,
+        token: ACCOUNT_TOKEN!,
       },
     } satisfies Config);

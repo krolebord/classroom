@@ -78,17 +78,16 @@ export default class AuthServiceWorker extends WorkerEntrypoint<Env> {
   async createSession(opts: CreateSessionOptions) {
     const sessionToken = crypto.randomUUID();
 
-    const defaultExpiresAt = addMilliseconds(
-      new Date(),
-      milliseconds(this.env.SESSION_LIFETIME),
-    );
+    const expiresAt =
+      opts.expiresAt ??
+      addMilliseconds(new Date(), milliseconds(this.env.SESSION_LIFETIME));
     await this.db.insert(Session).values({
       sessionToken,
       userId: opts.userId,
-      expires: opts.expiresAt ?? defaultExpiresAt,
+      expires: expiresAt,
     });
 
-    return { sessionToken };
+    return { sessionToken, expiresAt };
   }
 
   async verifySession(sessionToken: string) {

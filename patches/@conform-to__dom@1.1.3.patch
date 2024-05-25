@@ -1,0 +1,19 @@
+diff --git a/submission.d.ts b/submission.d.ts
+index be344301d440bc1e7bbe64178ded39edb2f61fd4..e887690c743c01031767a15d1ceff62b7c07e993 100644
+--- a/submission.d.ts
++++ b/submission.d.ts
+@@ -21,10 +21,13 @@ export type Submission<Schema, FormError = string[], FormValue = Schema> = {
+     error: Record<string, FormError | null> | null;
+     reply(options?: ReplyOptions<FormError>): SubmissionResult<FormError>;
+ };
++type Serializable = undefined | null | boolean | string | symbol | number | Array<Serializable> | {
++    [key: PropertyKey]: Serializable;
++} | bigint | Date | URL | RegExp | Error | Map<Serializable, Serializable> | Set<Serializable> | Promise<Serializable>;
+ export type SubmissionResult<FormError = string[]> = {
+     status?: 'error' | 'success';
+     intent?: Intent;
+-    initialValue?: Record<string, unknown> | null;
++    initialValue?: Record<string, Serializable> | null;
+     fields?: string[];
+     error?: Record<string, FormError | null>;
+     state?: SubmissionState;

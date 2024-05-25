@@ -70,6 +70,7 @@ export default tseslint.config(
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "@typescript-eslint/no-empty-interface": "off",
       "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/no-floating-promises": "error",
     },
   },
   {
