@@ -50,14 +50,14 @@ export class AuthService {
   }
 
   async signin(options: SigninOptions) {
-    const user = await this.auth.verifyEmailAndPassword(
+    const { userId } = await this.auth.verifyEmailAndPassword(
       options.email,
       options.password,
     );
-    if (!user) {
+    if (!userId) {
       return null;
     }
-    const session = await this.auth.createSession(user);
+    const session = await this.auth.createSession({ userId });
     return { sessionToken: session.sessionToken, expiresAt: session.expiresAt };
   }
 
@@ -72,7 +72,13 @@ export class AuthService {
       key: `session:${sessionToken}`,
       ttl: 5 * 1000,
       staleWhileRevalidate: 30 * 1000,
-      getFreshValue: () => this.auth.verifySession(sessionToken),
+      getFreshValue: async () => {
+        const session = await this.auth.verifySession(sessionToken);
+        if (!session.sessionToken) {
+          return null;
+        }
+        return session;
+      },
     });
   }
 

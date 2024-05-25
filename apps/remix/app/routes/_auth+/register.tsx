@@ -18,7 +18,8 @@ import {
   CardTitle,
 } from "@classroom/ui/card";
 import { Input } from "@classroom/ui/input";
-import { Label } from "@classroom/ui/label";
+
+import { FieldWrapper } from "~/components/forms";
 
 export const loader = unstable_defineLoader(async ({ context }) => {
   await context.auth.requireAnon();
@@ -126,31 +127,42 @@ export default function () {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form className="grid gap-4" {...getFormProps(form)} method="POST">
-          <div className="grid gap-2">
-            <Label htmlFor={fields.name.id}>Name</Label>
+        <Form className="grid gap-1" {...getFormProps(form)} method="POST">
+          <FieldWrapper field={fields.name} labelProps={{ tooltip: "Name" }}>
             <Input
               placeholder="Max"
               {...getInputProps(fields.name, { type: "text" })}
             />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor={fields.email.id}>Email</Label>
+          </FieldWrapper>
+          <FieldWrapper
+            field={fields.email}
+            labelProps={{ tooltip: "Email" }}
+            errors={form.errors}
+          >
             <Input
               placeholder="m@example.com"
-              {...getInputProps(fields.email, { type: "text" })}
+              {...getInputProps(fields.email, { type: "email" })}
             />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor={fields.password.id}>Password</Label>
-            <Input {...getInputProps(fields.password, { type: "password" })} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor={fields.confirmPassword.id}>Confirm Password</Label>
+          </FieldWrapper>
+          <FieldWrapper
+            field={fields.password}
+            labelProps={{ tooltip: "Password" }}
+          >
             <Input
+              placeholder="m@example.com"
+              {...getInputProps(fields.password, { type: "password" })}
+              autoComplete="off"
+            />
+          </FieldWrapper>
+          <FieldWrapper
+            field={fields.confirmPassword}
+            labelProps={{ tooltip: "Confirm Password" }}
+          >
+            <Input
+              placeholder="m@example.com"
               {...getInputProps(fields.confirmPassword, { type: "password" })}
             />
-          </div>
+          </FieldWrapper>
           <Button type="submit" className="w-full">
             Create an account
           </Button>

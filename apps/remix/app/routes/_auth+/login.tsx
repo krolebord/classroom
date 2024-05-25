@@ -19,7 +19,8 @@ import {
   CardTitle,
 } from "@classroom/ui/card";
 import { Input } from "@classroom/ui/input";
-import { Label } from "@classroom/ui/label";
+
+import { FieldWrapper } from "~/components/forms";
 
 export const loader = unstable_defineLoader(async ({ context }) => {
   await context.auth.requireAnon();
@@ -44,7 +45,6 @@ export const action = unstable_defineAction(async ({ context, request }) => {
   }
 
   const session = await context.auth.signin(submission.value);
-  console.log(session);
 
   if (!session) {
     return json(
@@ -69,8 +69,6 @@ export const action = unstable_defineAction(async ({ context, request }) => {
       expires: session.expiresAt,
     },
   );
-
-  console.log(setCookie);
 
   return redirect("/", {
     headers: {
@@ -97,18 +95,23 @@ export default function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form className="grid gap-4" {...getFormProps(form)} method="POST">
-          <div className="grid gap-2">
-            <Label htmlFor={fields.email.id}>Email</Label>
+        <Form className="grid gap-1" {...getFormProps(form)} method="POST">
+          <FieldWrapper field={fields.email} labelProps={{ tooltip: "Email" }}>
             <Input
               placeholder="m@example.com"
               {...getInputProps(fields.email, { type: "email" })}
             />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor={fields.password.id}>Password</Label>
-            <Input {...getInputProps(fields.password, { type: "password" })} />
-          </div>
+          </FieldWrapper>
+          <FieldWrapper
+            field={fields.password}
+            labelProps={{ tooltip: "Password" }}
+            errors={form.errors}
+          >
+            <Input
+              placeholder="m@example.com"
+              {...getInputProps(fields.password, { type: "password" })}
+            />
+          </FieldWrapper>
         </Form>
       </CardContent>
       <CardFooter className="gap-2">

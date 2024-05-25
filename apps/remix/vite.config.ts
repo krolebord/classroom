@@ -4,6 +4,7 @@ import {
 } from "@remix-run/dev";
 import { flatRoutes } from "remix-flat-routes";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 import { getLoadContext } from "./load-context.js";
 
@@ -35,6 +36,7 @@ export default defineConfig({
           ],
         }),
     }),
+    tsconfigPaths(),
   ],
   ssr: {
     resolve: {

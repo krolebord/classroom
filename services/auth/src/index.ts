@@ -60,7 +60,7 @@ export default class AuthServiceWorker extends WorkerEntrypoint<Env> {
     });
 
     if (!user?.passwordHash) {
-      return null;
+      return { userId: null };
     }
 
     const passwordMatches = await this.env.ARGON2.verify(
@@ -69,7 +69,7 @@ export default class AuthServiceWorker extends WorkerEntrypoint<Env> {
     );
 
     if (!passwordMatches) {
-      return null;
+      return { userId: null };
     }
 
     return { userId: user.id };
@@ -111,12 +111,12 @@ export default class AuthServiceWorker extends WorkerEntrypoint<Env> {
     });
 
     if (!session) {
-      return null;
+      return { sessionToken: null };
     }
 
     if (session.expires < new Date()) {
       this.ctx.waitUntil(this.removeSession(session.sessionToken));
-      return null;
+      return { sessionToken: null };
     }
 
     return session;
