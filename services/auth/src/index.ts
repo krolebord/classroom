@@ -21,6 +21,25 @@ type CreateSessionOptions = {
 
 export type AuthService = AuthServiceWorker;
 
+type VerifiedSession = Extract<
+  Awaited<ReturnType<AuthService["verifySession"]>>,
+  { sessionToken: string }
+>;
+
+export type AuthResponseContent =
+  | {
+      type: "error";
+      message: string;
+    }
+  | {
+      type: "success";
+      session: VerifiedSession;
+    };
+
+function json(body: AuthResponseContent, init?: ResponseInit) {
+  return new Response(JSON.stringify(body), init);
+}
+
 export default class AuthServiceWorker extends WorkerEntrypoint<Env> {
   private readonly db: Db;
 
@@ -30,8 +49,21 @@ export default class AuthServiceWorker extends WorkerEntrypoint<Env> {
     this.db = createDb(env.DB);
   }
 
-  override fetch(): Response | Promise<Response> {
-    return new Response("Auth service");
+  override async fetch(request: Request): Promise<Response> {
+    const segments = new URL(request.url).pathname.split("/");
+    const token = segments[1];
+
+    if (!token) {
+      return json({ type: "error", message: "Missing token" }, { status: 400 });
+    }
+
+    const session = await this.verifySession(token);
+
+    if (!session.sessionToken) {
+      return json({ type: "error", message: "Invalid token" }, { status: 400 });
+    }
+
+    return json({ type: "success", session });
   }
 
   async createUser(opts: CreateUserOptions) {
