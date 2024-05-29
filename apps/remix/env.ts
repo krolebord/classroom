@@ -10,12 +10,5 @@ export type Env = {
 
   CACHE: KVNamespace;
   DB: D1Database;
-  AUTH: Pick<
-    Service<AuthService>,
-    | "createSession"
-    | "createUser"
-    | "removeSession"
-    | "verifyEmailAndPassword"
-    | "verifySession"
-  >;
+  AUTH: AuthService;
 };

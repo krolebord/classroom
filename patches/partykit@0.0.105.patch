@@ -1,0 +1,142 @@
+diff --git a/dist/bin.mjs b/dist/bin.mjs
+index e0bdc0ef43b2ef98ed36c0bd55896fe6160d6ac4..b6c86aae0abb2496f1f7aed1b17723c83d1eaf76 100755
+--- a/dist/bin.mjs
++++ b/dist/bin.mjs
+@@ -84713,7 +84713,8 @@ var schema = z.object({
+   analytics: z.string().optional(),
+   bindings: z.object({
+     r2: z.record(z.string()).optional(),
+-    kv: z.record(z.string()).optional()
++    kv: z.record(z.string()).optional(),
++    services: z.record(z.string(), z.string()).optional(),
+   }).optional()
+   // placement: z
+   //   .object({
+@@ -89475,6 +89476,34 @@ function useDev(options) {
+         // windows
+         "/"
+       );
++      let serviceBindings = {};
++      if (isFirstBuild) {
++        console.log('Fetching worker entrypoints...');
++        let workerEntryPoints = await fetch('http://127.0.0.1:6284/workers');
++        workerEntryPoints = await workerEntryPoints.json();
++        workerEntryPoints = Object.fromEntries(Object.entries(workerEntryPoints).map(([name, data]) => {
++          const address = data.entrypointAddresses.default;
++          return [name,`${address.host}:${address.port}`]
++        }));
++        const services = config.bindings.services;
++        console.log('Entrypoints: ', JSON.stringify(workerEntryPoints, null, 2));
++        console.log('Requested service bindings: ', JSON.stringify(services, null, 2));
++
++        for (const binding of Object.keys(services)) {
++          const serviceName = services[binding];
++          serviceBindings[binding] = {
++            external: {
++              address: workerEntryPoints[serviceName],
++              http: {
++                style: 1,
++                cfBlobHeader: "MF-CF-Blob",
++              },
++            },
++          };
++        }
++
++        console.log('Service bindings: ', JSON.stringify(serviceBindings, null, 2));
++      }
+       ctx = await esbuild.context({
+         stdin: {
+           contents: workerFacade.replace("__WORKER__", absoluteScriptPath).replace(
+@@ -89483,6 +89512,9 @@ function useDev(options) {
+           ).replace(
+             "__KV_BINDINGS__",
+             JSON.stringify(Object.keys(config.bindings?.kv || []))
++          ).replace(
++            "__SERVICE_BINDINGS__",
++            JSON.stringify(Object.keys(config.bindings?.services || []))
+           ).replace(
+             "__PARTIES__",
+             Object.entries(config.parties || {}).map(
+@@ -89565,6 +89597,7 @@ Workers["${name2}"] = ${name2};
+                     localPersistencePath,
+                     options.config
+                   ) : void 0;
++
+                   void server.onBundleUpdate(
+                     {
+                       cf: !options.disableRequestCfFetch,
+@@ -89576,7 +89609,7 @@ Workers["${name2}"] = ${name2};
+                       verbose: options.verbose,
+                       inspectorPort: portForRuntimeInspector,
+                       handleRuntimeStdio,
+-                      compatibilityDate,
++                      compatibilityDate: config.compatibilityDate,
+                       compatibilityFlags: [
+                         "nodejs_compat",
+                         ...config.compatibilityFlags || []
+@@ -89623,6 +89656,7 @@ Workers["${name2}"] = ${name2};
+                       },
+                       ...config.bindings?.r2 ? { r2Buckets: Object.keys(config.bindings.r2) } : {},
+                       ...config.bindings?.kv ? { kvNamespaces: Object.keys(config.bindings.kv) } : {},
++                      serviceBindings,
+                       // @ts-expect-error miniflare's types are wrong
+                       modules: [
+                         {
+diff --git a/dist/generated.js b/dist/generated.js
+index d4e2d95b34b4c488a7b5e7f35e2040b81affa5c1..6969f232c08b026314cc1bab565b862b396d111f 100644
+--- a/dist/generated.js
++++ b/dist/generated.js
+@@ -648,6 +648,7 @@ function isClassWorker(worker) {
+ function getBindings(env) {
+   const r2Bindings = __R2_BINDINGS__;
+   const kvBindings = __KV_BINDINGS__;
++  const serviceBindings = __SERVICE_BINDINGS__;
+   return {
+     r2: r2Bindings.reduce(
+       (acc, name) => {
+@@ -662,7 +663,14 @@ function getBindings(env) {
+         return acc;
+       },
+       {}
+-    )
++    ),
++    services: serviceBindings.reduce(
++      (acc, name) => {
++        acc[name] = env[name];
++        return acc;
++      },
++      {}
++    ),
+   };
+ }
+ var PartyDurable = class {
+diff --git a/schema.json b/schema.json
+index 612da9ac7b1c790ff010c129385a9f3d16b9fa18..52a23c15f8ddd4b389cf4b8254acac9c9246c375 100644
+--- a/schema.json
++++ b/schema.json
+@@ -301,6 +301,12 @@
+           "additionalProperties": {
+             "type": "string"
+           }
++        },
++        "services": {
++          "type": "object",
++          "additionalProperties": {
++            "type": "string"
++          }
+         }
+       },
+       "additionalProperties": false
+diff --git a/server.d.ts b/server.d.ts
+index dd12dccffe1da991c3fc5013da0a25691cea0598..3579d46fce5028d9861c97914ecf492c0d9ebe7c 100644
+--- a/server.d.ts
++++ b/server.d.ts
+@@ -114,7 +114,7 @@ export type Connection<TState = unknown> = WebSocket & {
+     /** @deprecated use Connection.state instead */
+     deserializeAttachment<T = unknown>(): T | null;
+ };
+-type CustomBindings = {
++export interface CustomBindings {
+     r2: Record<string, R2Bucket>;
+     kv: Record<string, KVNamespace>;
+ };

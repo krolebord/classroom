@@ -4,7 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { LogoutButton } from "../resources+/auth+/logout";
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  const user = await context.auth.requireUser();
+  const user = await context.auth.requireSession();
 
   return { user };
 }

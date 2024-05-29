@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/partykit/schema.json",
+  "name": "classroom-ws-server",
+  "main": "src/server.ts",
+  "compatibilityDate": "2024-05-12",
+  "serve": {
+    "path": "public",
+    "build": "src/client.ts"
+  },
+  "bindings": {
+    "services": {
+      "AUTH": "classroom-service-auth"
+    }
+  }
+}

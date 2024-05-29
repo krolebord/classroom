@@ -27,6 +27,7 @@
     "@remix-run/server-runtime": "*",
     "cachified-adapter-cloudflare-kv": "^2.2.1",
     "isbot": "^4.1.0",
+    "lucide-react": "^0.379.0",
     "miniflare": "^3.20240512.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

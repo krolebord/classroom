@@ -19,7 +19,14 @@ type CreateSessionOptions = {
   expiresAt?: Date;
 };
 
-export type AuthService = AuthServiceWorker;
+export type AuthService = Pick<
+  Service<AuthServiceWorker>,
+  | "createSession"
+  | "createUser"
+  | "removeSession"
+  | "verifyEmailAndPassword"
+  | "verifySession"
+>;
 
 type VerifiedSession = Extract<
   Awaited<ReturnType<AuthService["verifySession"]>>,
@@ -33,7 +40,7 @@ export type AuthResponseContent =
     }
   | {
       type: "success";
-      session: VerifiedSession;
+      session: Omit<VerifiedSession, keyof Disposable>;
     };
 
 function json(body: AuthResponseContent, init?: ResponseInit) {
