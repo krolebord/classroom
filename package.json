@@ -27,8 +27,8 @@
   },
   "devDependencies": {
     "@classroom/prettier-config": "workspace:*",
-    "@cloudflare/workers-types": "^4.20221111.1",
-    "prettier": "3.2.5",
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "prettier": "^3.2.5",
     "syncpack": "^12.3.2",
     "turbo": "1.13.3",
     "typescript": "^5.4.5"
