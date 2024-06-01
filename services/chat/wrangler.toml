@@ -1,9 +1,12 @@
 #: schema https://github.com/cloudflare/workers-sdk/files/12887590/wrangler.schema.json
-name = "classroom-service-auth"
+name = "classroom-service-chat"
 main = "src/index.ts"
 account_id = "1f507c7933d231cc8051d23050bda6ab"
 compatibility_date = "2024-05-12"
 compatibility_flags = ["nodejs_compat"]
+
+dev.port = 5003
+dev.inspector_port = 9003
 
 [placement]
 mode = "smart"

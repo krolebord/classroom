@@ -4,9 +4,9 @@ import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import { unstable_defineLoader } from "@remix-run/server-runtime";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import {
-  BrushIcon,
+  ImageIcon,
   MenuIcon,
-  PenIcon,
+  NotebookPenIcon,
   PlusCircleIcon,
   XIcon,
 } from "lucide-react";
@@ -66,10 +66,10 @@ export const loader = unstable_defineLoader(async ({ context }) => {
 
 function getNavItemIcon(icon: NavItemProps["icon"]) {
   if (icon === "board") {
-    return <BrushIcon className="h-4 w-4" />;
+    return <ImageIcon className="h-4 w-4" />;
   }
   if (icon === "document") {
-    return <PenIcon className="h-4 w-4" />;
+    return <NotebookPenIcon className="h-4 w-4" />;
   }
   return icon as ReactNode;
 }

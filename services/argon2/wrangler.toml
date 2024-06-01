@@ -3,5 +3,8 @@ main = "build/worker/shim.mjs"
 account_id = "1f507c7933d231cc8051d23050bda6ab"
 compatibility_date = "2024-05-12"
 
+dev.port = 5001
+dev.inspector_port = 9001
+
 [build]
 command = "cargo install -q worker-build && worker-build --release"
