@@ -1,5 +1,5 @@
 {
-  "name": "ws-server",
+  "name": "@classroom/ws-server",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "partysocket": "^1.0.1"
   },
   "devDependencies": {
-    "@classroom/auth": "workspace:*",
+    "@classroom/auth-service": "workspace:*",
     "env-cmd": "^10.1.0",
     "partykit": "^0.0.105",
     "typescript": "^5.4.5"

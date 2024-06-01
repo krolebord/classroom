@@ -5,15 +5,8 @@ account_id = "1f507c7933d231cc8051d23050bda6ab"
 compatibility_date = "2024-05-12"
 compatibility_flags = ["nodejs_compat"]
 
-services = [
-  { binding = "ARGON2", service = "classroom-service-argon2" }
-]
-
 [placement]
 mode = "smart"
-
-[vars]
-SESSION_LIFETIME = { days = 30 }
 
 [[d1_databases]]
 binding = "DB"

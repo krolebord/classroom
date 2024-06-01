@@ -1,5 +1,5 @@
 {
-  "name": "@classroom/argon2",
+  "name": "@classroom/argon2-service",
   "version": "1.0.0",
   "private": true,
   "prettier": "@classroom/prettier-config",

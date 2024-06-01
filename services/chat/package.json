@@ -1,5 +1,5 @@
 {
-  "name": "@classroom/auth-service",
+  "name": "@classroom/chat-service",
   "version": "0.0.0",
   "private": true,
   "prettier": "@classroom/prettier-config",
@@ -24,7 +24,6 @@
     "date-fns": "^3.6.0"
   },
   "devDependencies": {
-    "@classroom/argon2-service": "workspace:*",
     "@classroom/eslint-config": "workspace:*",
     "@classroom/prettier-config": "workspace:*",
     "@classroom/tsconfig": "workspace:*",

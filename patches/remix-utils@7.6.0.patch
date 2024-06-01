@@ -1,0 +1,20 @@
+diff --git a/build/server/named-action.d.ts b/build/server/named-action.d.ts
+index 9d4258000bf8de3e7ae968aaaf3d55c7396dc7c1..da80865e9261fa657d3ef890c34f3c1ec5d3e0e7 100644
+--- a/build/server/named-action.d.ts
++++ b/build/server/named-action.d.ts
+@@ -1,7 +1,13 @@
+ import type { TypedResponse } from "@remix-run/server-runtime";
+-type ActionsRecord = Record<string, () => Promise<TypedResponse<unknown>>>;
++
++type Serializable = undefined | null | boolean | string | symbol | number | Array<Serializable> | {
++    [key: PropertyKey]: Serializable;
++} | bigint | Date | URL | RegExp | Error | Map<Serializable, Serializable> | Set<Serializable> | Promise<Serializable>;
++type DataFunctionReturnValue = Serializable | TypedResponse<Record<string, unknown>>;
++
++type ActionsRecord = Record<string, () => (Promise<DataFunctionReturnValue> | DataFunctionReturnValue)>;
+ type ResponsesRecord<Actions extends ActionsRecord> = {
+-    [Action in keyof Actions]: Actions[Action] extends () => Promise<TypedResponse<infer Result>> ? Result : never;
++    [Action in keyof Actions]: Actions[Action] extends () => infer Result ? Awaited<Result> : never;
+ };
+ type ResponsesUnion<Actions extends ActionsRecord> = ResponsesRecord<Actions>[keyof Actions];
+ /**

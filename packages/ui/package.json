@@ -32,6 +32,7 @@
     "lucide-react": "^0.379.0",
     "next-themes": "^0.3.0",
     "sonner": "^1.4.41",
+    "spin-delay": "^2.0.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1"

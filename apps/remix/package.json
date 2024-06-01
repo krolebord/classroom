@@ -38,7 +38,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@classroom/auth": "workspace:*",
+    "@classroom/auth-service": "workspace:*",
     "@classroom/eslint-config": "workspace:*",
     "@classroom/prettier-config": "workspace:*",
     "@classroom/tailwind-config": "workspace:*",

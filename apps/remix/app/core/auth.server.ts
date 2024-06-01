@@ -77,7 +77,7 @@ export class AuthService {
         if (!session.sessionToken) {
           return null;
         }
-        return session;
+        return session as OmitDisposable<typeof session>;
       },
     });
   }
