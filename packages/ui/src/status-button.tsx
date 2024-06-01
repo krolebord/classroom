@@ -65,3 +65,57 @@ export const StatusButton = React.forwardRef<
   );
 });
 StatusButton.displayName = "Button";
+
+export const IconStatusButton = React.forwardRef<
+  HTMLButtonElement,
+  Omit<ButtonProps, "size"> & {
+    status: "pending" | "success" | "error" | "idle";
+    message?: string | null;
+    spinDelay?: Parameters<typeof useSpinDelay>[1];
+  }
+>(({ message, status, className, children, spinDelay, ...props }, ref) => {
+  const delayedPending = useSpinDelay(status === "pending", {
+    delay: 400,
+    minDuration: 300,
+    ...spinDelay,
+  });
+  const companion = {
+    pending: delayedPending ? (
+      <div className="inline-flex h-6 w-6 items-center justify-center">
+        <RefreshCwIcon className="animate-spin" />
+      </div>
+    ) : null,
+    success: (
+      <div className="inline-flex h-6 w-6 items-center justify-center">
+        <CheckIcon />
+      </div>
+    ),
+    error: (
+      <div className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-destructive">
+        <XIcon className="text-destructive-foreground" />
+      </div>
+    ),
+    idle: null,
+  }[status];
+
+  return (
+    <Button
+      ref={ref}
+      className={cn("aspect-square items-center justify-center p-0", className)}
+      {...props}
+    >
+      {!companion && children}
+      {message ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>{companion}</TooltipTrigger>
+            <TooltipContent>{message}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        companion
+      )}
+    </Button>
+  );
+});
+IconStatusButton.displayName = "Button";

@@ -33,7 +33,7 @@
     "db:push:local": "cross-env LOCAL_DB_PATH=$(find ../../.data/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print -quit) drizzle-kit push"
   },
   "dependencies": {
-    "drizzle-orm": "^0.30.10",
+    "drizzle-orm": "^0.31.0",
     "drizzle-zod": "^0.5.1",
     "zod": "^3.23.8"
   },
@@ -45,7 +45,7 @@
     "better-sqlite3": "^10.0.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
-    "drizzle-kit": "^0.21.4",
+    "drizzle-kit": "^0.22.1",
     "eslint": "^9.2.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5"

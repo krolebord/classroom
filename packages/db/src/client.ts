@@ -5,4 +5,5 @@ import * as schema from "./schema";
 
 export type Db = DrizzleD1Database<typeof schema>;
 
-export const createDb = (client: D1Database) => drizzle(client, { schema });
+export const createDb = (client: D1Database) =>
+  drizzle(client, { schema, logger: true });

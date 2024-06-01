@@ -1,52 +1,74 @@
 import type React from "react";
 import type { ReactNode } from "react";
-import { Link, NavLink, Outlet } from "@remix-run/react";
+import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import { unstable_defineLoader } from "@remix-run/server-runtime";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import {
-  ArrowUpIcon,
   BrushIcon,
-  HomeIcon,
-  Icon,
   MenuIcon,
-  MessageCircleIcon,
   PenIcon,
   PlusCircleIcon,
-  SquirrelIcon,
-  UserIcon,
-  UsersIcon,
   XIcon,
 } from "lucide-react";
 
+import { desc, sql, unionAll } from "@classroom/db";
+import { Board, Document } from "@classroom/db/schema";
 import { cn } from "@classroom/ui";
-import { Avatar, AvatarFallback, AvatarImage } from "@classroom/ui/avatar";
-import { Button } from "@classroom/ui/button";
+import { Avatar, AvatarFallback } from "@classroom/ui/avatar";
 import { Separator } from "@classroom/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@classroom/ui/sheet";
-import { Textarea } from "@classroom/ui/textarea";
 
 import { Logo } from "~/components/logo";
 import { useUser } from "~/root";
+import { NewActivityButton } from "../resources+/new.activity";
 
-type NavItem = {
-  to: string;
-  icon: React.ReactNode;
-  title: string;
-};
+type ActivityType = "board" | "document";
 
-export const loader = unstable_defineLoader(({ context }) => {
-  const user = context.auth.requireUser();
+export const loader = unstable_defineLoader(async ({ context }) => {
+  await context.auth.requireUser();
 
-  const navItems = {};
+  const boardsQuery = context.db
+    .select({
+      id: Board.id,
+      name: Board.name,
+      createdAt: Board.createdAt,
+      type: sql<ActivityType>`'board'`,
+    })
+    .from(Board);
 
-  return {};
+  const documentsQuery = context.db
+    .select({
+      id: Document.id,
+      name: Document.name,
+      createdAt: Document.createdAt,
+      type: sql<ActivityType>`'document'`,
+    })
+    .from(Document);
+
+  const items = await unionAll(boardsQuery, documentsQuery)
+    .orderBy(desc(sql`createdAt`))
+    .limit(25);
+
+  return {
+    navItems: items.map(
+      (item) =>
+        ({
+          to:
+            item.type === "board"
+              ? `/board/${item.id}`
+              : `/document/${item.id}`,
+          title: item.name,
+          icon: item.type === "board" ? "board" : "document",
+        }) satisfies NavItemProps,
+    ),
+  };
 });
 
 function getNavItemIcon(icon: NavItemProps["icon"]) {
   if (icon === "board") {
     return <BrushIcon className="h-4 w-4" />;
   }
-  if (icon === "text") {
+  if (icon === "document") {
     return <PenIcon className="h-4 w-4" />;
   }
   return icon as ReactNode;
@@ -55,7 +77,7 @@ function getNavItemIcon(icon: NavItemProps["icon"]) {
 type NavItemProps = {
   to: string;
   title: string;
-  icon: "board" | "text" | Omit<React.ReactNode, string>;
+  icon: "board" | "document" | Omit<React.ReactNode, string>;
 };
 function NavItem(props: NavItemProps) {
   const { to, icon, title } = props;
@@ -78,14 +100,20 @@ function NavItem(props: NavItemProps) {
   );
 }
 
-type SidebarProps = {};
+type SidebarProps = {
+  items: NavItemProps[];
+};
 function Sidebar(props: SidebarProps) {
-  const {} = props;
+  const { items } = props;
 
   const user = useUser();
 
   const nav = (
-    <nav className="flex flex-col items-stretch px-4 text-sm font-medium"></nav>
+    <nav className="flex flex-col items-stretch px-4 text-sm font-medium">
+      {items.map((item) => (
+        <NavItem key={item.to} {...item} />
+      ))}
+    </nav>
   );
 
   return (
@@ -108,10 +136,12 @@ function Sidebar(props: SidebarProps) {
         <div className="px-6 py-2">
           <Separator />
         </div>
-        <div className="flex items-center gap-3 rounded-lg px-3 py-2  text-gray-500 transition-all  hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
-          <PlusCircleIcon className="h-4 w-4" />
-          New Activity
-        </div>
+        <NewActivityButton>
+          <button className="flex items-center gap-3 rounded-lg px-3 py-2  text-gray-500 transition-all  hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+            <PlusCircleIcon className="h-4 w-4" />
+            New Activity
+          </button>
+        </NewActivityButton>
       </aside>
       <div className="flex min-h-14 w-full flex-row items-center justify-between border-b bg-gray-100/40 px-6 dark:bg-gray-800/40 lg:hidden">
         <Link className="flex items-center gap-2" to="/profile">
@@ -126,14 +156,24 @@ function Sidebar(props: SidebarProps) {
               <MenuIcon className="h-6 w-6" />
             </button>
           </SheetTrigger>
-          <SheetContent noClose className="min-w-64 max-w-96 px-6 py-3">
-            <div className="flex h-10 items-center">
+          <SheetContent noClose className="min-w-64 max-w-96 p-0">
+            <div className="h-2"></div>
+            <div className="flex h-12 items-center px-6">
               <Logo to="/" />
             </div>
-            <div className="py-2">
+            <div className="px-6 py-2">
               <Separator />
             </div>
             {nav}
+            <div className="px-6 py-2">
+              <Separator />
+            </div>
+            <NewActivityButton>
+              <button className="flex w-full items-center gap-3 rounded-lg px-6 py-2  text-gray-500 transition-all  hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+                <PlusCircleIcon className="h-4 w-4" />
+                New Activity
+              </button>
+            </NewActivityButton>
             <SheetPrimitive.Close className="absolute right-6 top-5 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
               <XIcon className="h-6 w-6" />
               <span className="sr-only">Close</span>
@@ -146,9 +186,10 @@ function Sidebar(props: SidebarProps) {
 }
 
 export default function () {
+  const { navItems } = useLoaderData<typeof loader>();
   return (
     <div className="flex min-h-screen w-full flex-col overflow-hidden lg:flex-row">
-      <Sidebar />
+      <Sidebar items={navItems} />
       <main className="overflow-x-hidde min-h-screen w-full overflow-y-auto">
         <Outlet />
       </main>

@@ -16,6 +16,11 @@ export const User = sqliteTable("user", {
   createdAt: defaultNow(),
 });
 
+export const UserRelations = relations(User, ({ many }) => ({
+  boards: many(Board),
+  documents: many(Document),
+}));
+
 export const Session = sqliteTable("session", {
   sessionToken: text("sessionToken", { length: 255 }).notNull().primaryKey(),
   userId: text("userId")
@@ -28,4 +33,35 @@ export const Session = sqliteTable("session", {
 
 export const SessionRelations = relations(Session, ({ one }) => ({
   user: one(User, { fields: [Session.userId], references: [User.id] }),
+}));
+
+export const Board = sqliteTable("board", {
+  id: text("id").notNull().primaryKey(),
+  name: text("name").notNull(),
+
+  createdById: text("createdById").references(() => User.id, {
+    onDelete: "cascade",
+  }),
+  createdAt: defaultNow(),
+});
+
+export const BoardRelations = relations(Board, ({ one }) => ({
+  createdBy: one(User, { fields: [Board.createdById], references: [User.id] }),
+}));
+
+export const Document = sqliteTable("document", {
+  id: text("id").notNull().primaryKey(),
+  name: text("name").notNull(),
+
+  createdById: text("createdById").references(() => User.id, {
+    onDelete: "cascade",
+  }),
+  createdAt: defaultNow(),
+});
+
+export const DocumentRelations = relations(Document, ({ one }) => ({
+  createdBy: one(User, {
+    fields: [Document.createdById],
+    references: [User.id],
+  }),
 }));
