@@ -12,7 +12,7 @@ patchedDependencies:
     hash: emdngtue7rymuizodqlhfr7x5m
     path: patches/@conform-to__dom@1.1.3.patch
   partykit@0.0.105:
-    hash: biw2zn753g6x37vz6upb6ozmrm
+    hash: kd3fvraj26pslslh37am2gkoiy
     path: patches/partykit@0.0.105.patch
   remix-utils@7.6.0:
     hash: zch7h7iw73yjy7cxwidoijeiwi
@@ -182,7 +182,7 @@ importers:
         version: 10.1.0
       partykit:
         specifier: ^0.0.105
-        version: 0.0.105(patch_hash=biw2zn753g6x37vz6upb6ozmrm)
+        version: 0.0.105(patch_hash=kd3fvraj26pslslh37am2gkoiy)
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -9800,7 +9800,7 @@ snapshots:
 
   parseurl@1.3.3: {}
 
-  partykit@0.0.105(patch_hash=biw2zn753g6x37vz6upb6ozmrm):
+  partykit@0.0.105(patch_hash=kd3fvraj26pslslh37am2gkoiy):
     dependencies:
       '@cloudflare/workers-types': 4.20240320.1
       clipboardy: 4.0.0

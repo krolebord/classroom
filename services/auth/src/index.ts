@@ -28,12 +28,19 @@ export type AuthService = Pick<
   | "verifySession"
 >;
 
-type OmitDisposable<T extends Disposable> = Omit<T, keyof Disposable>;
+type OmitDisposable<T extends Disposable> = {
+  [P in Exclude<keyof T, keyof Disposable>]: T[P];
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+} & unknown;
 
-type VerifiedSession = Extract<
-  Awaited<ReturnType<AuthService["verifySession"]>>,
-  { sessionToken: string }
+export type VerifiedSession = OmitDisposable<
+  Extract<
+    Awaited<ReturnType<AuthService["verifySession"]>>,
+    { sessionToken: string }
+  >
 >;
+
+export type VeirfiedUser = VerifiedSession["user"];
 
 export type AuthResponseContent =
   | {
@@ -42,7 +49,7 @@ export type AuthResponseContent =
     }
   | {
       type: "success";
-      session: OmitDisposable<VerifiedSession>;
+      session: VerifiedSession;
     };
 
 function json(body: AuthResponseContent, init?: ResponseInit) {
