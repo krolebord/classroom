@@ -1,10 +1,13 @@
 import type * as Party from "partykit/server";
 import { nanoid } from "nanoid";
 
-import type { VeirfiedUser } from "@classroom/auth-service";
-
+import type { UserConnection } from "../../utils/auth.js";
 import type { RoomInfoUpdateRequest } from "../rooms-counter.js";
 import type { Message, UserMessage } from "./messages.js";
+import {
+  authorizeUserSocketRequest,
+  setUserConnectionState,
+} from "../../utils/auth.js";
 import {
   createInternalRequest,
   getParty,
@@ -17,10 +20,6 @@ import {
   syncMessage,
   systemMessage,
 } from "./messages.js";
-
-type ChatConnectionState = { user: VeirfiedUser };
-
-type ChatConnection = Party.Connection<ChatConnectionState>;
 
 export default class ChatRoomServer implements Party.Server {
   messages: Message[] = [];
@@ -37,37 +36,19 @@ export default class ChatRoomServer implements Party.Server {
   }
 
   static async onBeforeConnect(request: Party.Request, lobby: Party.Lobby) {
-    const unauthorized = new Response("Unauthorized", { status: 401 });
-    try {
-      const token = new URL(request.url).searchParams.get("token") ?? "";
-      if (!token) {
-        return unauthorized;
-      }
-
-      const session = await lobby.bindings.services.AUTH.verifySession(token);
-      if (!session || !session.sessionToken) {
-        return unauthorized;
-      }
-
-      request.headers.set("X-Auth-User", JSON.stringify(session.user));
-
-      return request;
-    } catch (e) {
-      return unauthorized;
-    }
+    return (
+      (await authorizeUserSocketRequest(
+        request,
+        lobby.bindings.services.AUTH,
+      )) ?? new Response("Unauthorized", { status: 401 })
+    );
   }
 
   async onConnect(
-    connection: ChatConnection,
+    connection: UserConnection,
     { request }: Party.ConnectionContext,
   ) {
-    const userJson = request.headers.get("X-Auth-User");
-    if (!userJson) {
-      throw new Error("No user found");
-    }
-
-    const user = JSON.parse(userJson) as VeirfiedUser;
-    connection.setState({ user });
+    setUserConnectionState(connection, request);
 
     await this.ensureLoadMessages();
     connection.send(syncMessage(this.messages ?? []));
@@ -75,7 +56,7 @@ export default class ChatRoomServer implements Party.Server {
     this.updateRoomList("enter");
   }
 
-  async onMessage(messageString: string, connection: ChatConnection) {
+  async onMessage(messageString: string, connection: UserConnection) {
     if (!connection.state) {
       return;
     }
@@ -111,7 +92,7 @@ export default class ChatRoomServer implements Party.Server {
     }
   }
 
-  async onClose(_: ChatConnection) {
+  async onClose(_: UserConnection) {
     this.updateRoomList("leave");
   }
 

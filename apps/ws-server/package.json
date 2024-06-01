@@ -7,12 +7,14 @@
     "deploy": "env-cmd partykit deploy --domain classroom-ws-server.krolebord.workers.dev"
   },
   "dependencies": {
-    "partysocket": "^1.0.1"
+    "partysocket": "^1.0.1",
+    "y-partykit": "^0.0.28"
   },
   "devDependencies": {
     "@classroom/auth-service": "workspace:*",
     "env-cmd": "^10.1.0",
     "partykit": "^0.0.105",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "yjs": "^13.6.15"
   }
 }
