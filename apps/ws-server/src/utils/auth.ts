@@ -1,11 +1,9 @@
 import type { Connection, PartyEnv, Request } from "partykit/server";
+import * as jwt from "@tsndr/cloudflare-worker-jwt";
 
-import type {
-  AuthResponseContent,
-  VeirfiedUser,
-} from "@classroom/auth-service";
+import type { VeirfiedUser } from "@classroom/auth-service";
 
-export const authHeader = "X-Auth-User";
+export const authHeader = "X-Verified-Token";
 
 type UserConnectionState = { user: VeirfiedUser };
 
@@ -18,23 +16,22 @@ export async function authorizeUserSocketRequest(
   try {
     const token = new URL(request.url).searchParams.get("token") ?? "";
     if (!token) {
+      console.warn("no token");
       return null;
     }
 
-    const resp = await fetch(`${env.AUTH_SERVICE_URL}/${token}`, {
-      method: "GET",
-    });
-
-    const result = (await resp.json()) as AuthResponseContent;
-
-    if (result.type === "error" || !result.session.sessionToken) {
+    console.log("token", env.JWT_SECRET);
+    const isValid = await jwt.verify(token, env.JWT_SECRET);
+    if (!isValid) {
+      console.warn("invalid token");
       return null;
     }
 
-    request.headers.set(authHeader, JSON.stringify(result.session.user));
+    request.headers.set(authHeader, token);
 
     return request;
   } catch (e) {
+    console.error("auth error", e);
     return null;
   }
 }
@@ -43,11 +40,22 @@ export function setUserConnectionState(
   connection: UserConnection,
   request: Request,
 ) {
-  const userJson = request.headers.get("X-Auth-User");
-  if (!userJson) {
-    throw new Error("No user found");
+  const token = request.headers.get(authHeader);
+  if (!token) {
+    throw new Error("Mising token");
   }
 
-  const user = JSON.parse(userJson) as VeirfiedUser;
-  connection.setState({ user });
+  const { payload } = jwt.decode<VeirfiedUser>(token);
+
+  if (!payload) {
+    throw new Error("Invalid token");
+  }
+
+  connection.setState({
+    user: {
+      id: payload.id,
+      name: payload.name,
+      email: payload.email,
+    },
+  });
 }

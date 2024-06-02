@@ -144,7 +144,7 @@ export function RoomChat() {
       }
     },
     query: {
-      token: session.sessionToken,
+      token: session.wsJwt,
     },
   });
 

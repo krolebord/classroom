@@ -7,6 +7,6 @@ declare module "partykit/server" {
 
   interface PartyEnv extends Record<string, unknown> {
     INTERNAL_TOKEN: string;
-    AUTH_SERVICE_URL: string;
+    JWT_SECRET: string;
   }
 }

@@ -1,3 +1,4 @@
+import * as jwt from "@tsndr/cloudflare-worker-jwt";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { addMilliseconds, milliseconds } from "date-fns";
 
@@ -40,7 +41,11 @@ export type VerifiedSession = OmitDisposable<
   >
 >;
 
-export type VeirfiedUser = VerifiedSession["user"];
+export type VeirfiedUser = {
+  id: string;
+  name: string;
+  email: string;
+};
 
 export type AuthResponseContent =
   | {
@@ -167,7 +172,19 @@ export default class AuthServiceWorker extends WorkerEntrypoint<Env> {
       return { sessionToken: null };
     }
 
-    return session;
+    const wsJwt = await jwt.sign<VeirfiedUser>(
+      {
+        id: session.userId,
+        name: session.user.name,
+        email: session.user.email,
+      },
+      this.env.JWT_SECRET,
+    );
+
+    return {
+      ...session,
+      wsJwt,
+    } satisfies { user: VeirfiedUser; wsJwt: string };
   }
 
   async removeSession(sessionToken: string) {

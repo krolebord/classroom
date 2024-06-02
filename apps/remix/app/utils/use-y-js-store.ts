@@ -76,7 +76,7 @@ export function useYjsStore({
     room: `${roomId}_${version}`,
     doc: props.yDoc,
     options: {
-      params: { token: session.sessionToken },
+      params: { token: session.wsJwt },
     },
   });
 

@@ -6,4 +6,5 @@ export type Env = {
   DB: D1Database;
   ARGON2: Service<Argon2>;
   SESSION_LIFETIME: Duration;
+  JWT_SECRET: string;
 };

@@ -1,5 +1,5 @@
 diff --git a/dist/bin.mjs b/dist/bin.mjs
-index e0bdc0ef43b2ef98ed36c0bd55896fe6160d6ac4..b6c86aae0abb2496f1f7aed1b17723c83d1eaf76 100755
+index e0bdc0ef43b2ef98ed36c0bd55896fe6160d6ac4..0cedb7c576a88471e802357e69f411ecca134d91 100755
 --- a/dist/bin.mjs
 +++ b/dist/bin.mjs
 @@ -84713,7 +84713,8 @@ var schema = z.object({
@@ -17,7 +17,7 @@ index e0bdc0ef43b2ef98ed36c0bd55896fe6160d6ac4..b6c86aae0abb2496f1f7aed1b17723c8
          "/"
        );
 +      let serviceBindings = {};
-+      if (isFirstBuild) {
++      if (isFirstBuild && Object.keys(config.bindings.services).length > 0) {
 +        console.log('Fetching worker entrypoints...');
 +        let workerEntryPoints = await fetch('http://127.0.0.1:6284/workers');
 +        workerEntryPoints = await workerEntryPoints.json();

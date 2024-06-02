@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@classroom/db": "workspace:*",
+    "@tsndr/cloudflare-worker-jwt": "^2.5.3",
     "date-fns": "^3.6.0"
   },
   "devDependencies": {

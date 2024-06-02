@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "partykit dev --live --persist=\"../../.data\"",
-    "deploy": "env-cmd partykit deploy --with-env --domain classroom-ws-server.krolebord.workers.dev"
+    "deploy": "env-cmd partykit deploy --domain classroom-ws-server.krolebord.workers.dev"
   },
   "dependencies": {
+    "@tsndr/cloudflare-worker-jwt": "^2.5.3",
     "partysocket": "^1.0.1",
     "y-partykit": "^0.0.28"
   },
