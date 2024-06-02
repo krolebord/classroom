@@ -1,31 +1,7 @@
 #: schema https://github.com/cloudflare/workers-sdk/files/12887590/wrangler.schema.json
-name = "classroom-remix"
-
-main = "./server.ts"
-workers_dev = true
+name = "classroom-db"
 account_id = "1f507c7933d231cc8051d23050bda6ab"
 compatibility_date = "2024-05-12"
-
-services = [
-  { binding = "AUTH", service = "classroom-service-auth" }
-]
-
-kv_namespaces = [
-  { binding = "CACHE", id = "f47062b8b39c4c289d354d8d839d7c51" }
-]
-
-[placement]
-mode = "smart"
-
-[site]
-bucket = "./build/client"
-
-[build]
-command = "pnpm run build"
-
-[vars]
-ROOMS_COUNTER_SINGLETON_ID = "rooms-counter"
-WS_SERVER_HOST = "classroom-ws-server.krolebord.workers.dev"
 
 [[d1_databases]]
 binding = "DB"

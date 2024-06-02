@@ -4,21 +4,17 @@ import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import { unstable_defineLoader } from "@remix-run/server-runtime";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import {
-  ArrowUpIcon,
   ImageIcon,
   MenuIcon,
   NotebookPenIcon,
   PlusCircleIcon,
   XIcon,
 } from "lucide-react";
-import { usePartySocket } from "partysocket/react";
 
 import { desc, sql, unionAll } from "@classroom/db";
 import { Board, Document } from "@classroom/db/schema";
 import { cn } from "@classroom/ui";
 import { Avatar, AvatarFallback } from "@classroom/ui/avatar";
-import { Button } from "@classroom/ui/button";
-import { Input } from "@classroom/ui/input";
 import { Separator } from "@classroom/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@classroom/ui/sheet";
 
@@ -28,7 +24,7 @@ import {
   useRoomsCounter,
 } from "~/components/rooms-counter";
 import { TldrawProvider } from "~/components/tldraw-context";
-import { useClientEnv, useUser } from "~/root";
+import { useUser } from "~/root";
 import { NewActivityButton } from "../resources+/new.activity";
 
 type ActivityType = "board" | "document";
@@ -222,116 +218,6 @@ export default function () {
           <Outlet />
         </TldrawProvider>
       </main>
-
-      {/* <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
-        <div className="flex -space-x-2">
-          <Avatar className="h-8 w-8 border">
-            <AvatarImage alt="Image" src="/placeholder-user.jpg" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <Avatar className="h-8 w-8 border">
-            <AvatarImage alt="Image" src="/placeholder-user.jpg" />
-            <AvatarFallback>JS</AvatarFallback>
-          </Avatar>
-          <Avatar className="h-8 w-8 border">
-            <AvatarImage alt="Image" src="/placeholder-user.jpg" />
-            <AvatarFallback>MB</AvatarFallback>
-          </Avatar>
-        </div>
-        <div className="text-sm font-medium">3 participants</div>
-      </div> */}
-      {/* <div className="absolute bottom-0 left-0 flex w-full flex-wrap items-center justify-center gap-4 bg-gray-100/40 p-4 dark:bg-gray-800/40">
-        <div className="group relative">
-          <div className="h-20 w-20 overflow-hidden rounded-md">
-            <img
-              alt="Participant"
-              className="h-full w-full object-cover"
-              height={80}
-              src="/placeholder.svg"
-              style={{
-                aspectRatio: "80/80",
-                objectFit: "cover",
-              }}
-              width={80}
-            />
-          </div>
-          <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
-            John Doe
-          </div>
-        </div>
-        <div className="group relative">
-          <div className="h-20 w-20 overflow-hidden rounded-md">
-            <img
-              alt="Participant"
-              className="h-full w-full object-cover"
-              height={80}
-              src="/placeholder.svg"
-              style={{
-                aspectRatio: "80/80",
-                objectFit: "cover",
-              }}
-              width={80}
-            />
-          </div>
-          <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
-            Jane Smith
-          </div>
-        </div>
-        <div className="group relative">
-          <div className="h-20 w-20 overflow-hidden rounded-md">
-            <img
-              alt="Participant"
-              className="h-full w-full object-cover"
-              height={80}
-              src="/placeholder.svg"
-              style={{
-                aspectRatio: "80/80",
-                objectFit: "cover",
-              }}
-              width={80}
-            />
-          </div>
-          <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
-            Michael Brown
-          </div>
-        </div>
-        <div className="group relative">
-          <div className="h-20 w-20 overflow-hidden rounded-md">
-            <img
-              alt="Participant"
-              className="h-full w-full object-cover"
-              height={80}
-              src="/placeholder.svg"
-              style={{
-                aspectRatio: "80/80",
-                objectFit: "cover",
-              }}
-              width={80}
-            />
-          </div>
-          <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
-            Sarah Johnson
-          </div>
-        </div>
-        <div className="group relative">
-          <div className="h-20 w-20 overflow-hidden rounded-md">
-            <img
-              alt="Participant"
-              className="h-full w-full object-cover"
-              height={80}
-              src="/placeholder.svg"
-              style={{
-                aspectRatio: "80/80",
-                objectFit: "cover",
-              }}
-              width={80}
-            />
-          </div>
-          <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
-            Alex Smith
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import type { Editor } from "tldraw";
 import { InstancePresenceRecordType, Tldraw } from "tldraw";
 
-import { useUser } from "~/root";
+import { useClientEnv, useUser } from "~/root";
 import { useYjsStore } from "~/utils/use-y-js-store";
 import { useTldraw } from "./tldraw-context";
 
@@ -12,9 +12,11 @@ export default function Board(props: BoardProps) {
   const { boardId } = props;
   const { setEditor } = useTldraw();
 
+  const env = useClientEnv();
+
   const store = useYjsStore({
     roomId: boardId,
-    hostUrl: "localhost:1999",
+    hostUrl: env.wsServerHost,
   });
 
   const user = useUser();
