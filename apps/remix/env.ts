@@ -7,6 +7,8 @@ export type Cloudflare = Omit<PlatformProxy<Env>, "dispose">;
 
 export type Env = {
   COOKIE_SECRET: string;
+  WS_SERVER_HOST: string;
+  ROOMS_COUNTER_SINGLETON_ID: string;
 
   CACHE: KVNamespace;
   DB: D1Database;

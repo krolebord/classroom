@@ -21,6 +21,8 @@ export type RoomInfo = {
   connections: number;
 };
 
+export type RoomsInfo = Record<string, number>;
+
 export default class ChatRoomsServer implements Party.Server {
   options: Party.ServerOptions = {
     hibernate: true,
@@ -54,9 +56,12 @@ export default class ChatRoomsServer implements Party.Server {
     return notFound();
   }
 
-  async getActiveRooms(): Promise<RoomInfo[]> {
+  async getActiveRooms(): Promise<RoomsInfo> {
     const rooms = await this.room.storage.list<RoomInfo>();
-    return [...rooms.values()];
+    const info = Object.fromEntries(
+      [...rooms.values()].map((room) => [room.id, room.connections]),
+    );
+    return info;
   }
 
   async updateRoomInfo(req: Party.Request) {

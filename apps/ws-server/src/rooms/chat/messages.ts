@@ -12,6 +12,11 @@ export type Message = {
   at: number; // Date
 };
 
+export type Participant = {
+  id: string;
+  name: string;
+};
+
 // Outbound message types
 
 export type BroadcastMessage = {
@@ -21,6 +26,11 @@ export type BroadcastMessage = {
 export type SyncMessage = {
   type: "sync";
   messages: Message[];
+};
+
+export type ParticipantsSync = {
+  type: "participants";
+  participants: Participant[];
 };
 
 // Inbound message types
@@ -38,7 +48,7 @@ export type EditMessage = {
 };
 
 export type UserMessage = NewMessage | EditMessage;
-export type ChatMessage = BroadcastMessage | SyncMessage;
+export type ChatMessage = BroadcastMessage | SyncMessage | ParticipantsSync;
 
 export const newMessage = (msg: Omit<Message, "id" | "at">) =>
   JSON.stringify(<BroadcastMessage>{
@@ -57,6 +67,9 @@ export const editMessage = (msg: Omit<Message, "at">) =>
 
 export const syncMessage = (messages: Message[]) =>
   JSON.stringify(<SyncMessage>{ type: "sync", messages });
+
+export const participantsSyncMessage = (participants: Participant[]) =>
+  JSON.stringify(<ParticipantsSync>{ type: "participants", participants });
 
 export const systemMessage = (text: string) =>
   newMessage({ from: { id: "system", name: "system" }, text });

@@ -6,10 +6,23 @@ import { ClientOnly } from "remix-utils/client-only";
 import tldrawStyles from "tldraw/tldraw.css?url";
 import { z } from "zod";
 
+import {
+  ActivityContent,
+  ActivityHeader,
+  ActivityLayout,
+  ActivitySidebar,
+} from "~/components/activity-layout";
+import {
+  RoomChat,
+  RoomChatHeader,
+  RoomChatStoreProvider,
+} from "~/components/chat-room";
+import activityStyles from "~/styles/activity.css?url";
 import { zodParseOrNotFound } from "~/utils/zod";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tldrawStyles },
+  { rel: "stylesheet", href: activityStyles },
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap",
@@ -46,15 +59,20 @@ export default function DocumentRoute() {
   const { board } = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center">
-      <p className="text-4xl font-semibold">{board.name}</p>
-      <div className="h-full w-full">
-        <Suspense fallback={<div>Loading...</div>}>
-          <ClientOnly>
-            {() => <Board key={board.id} boardId={board.id} />}
-          </ClientOnly>
-        </Suspense>
-      </div>
-    </div>
+    <RoomChatStoreProvider key={board.id} roomId={board.id}>
+      <ActivityLayout>
+        <ActivityHeader>
+          <RoomChatHeader title={board.name} />
+        </ActivityHeader>
+        <ActivityContent className="z-0 h-full w-full">
+          <Suspense fallback={<div>Loading...</div>}>
+            <ClientOnly>{() => <Board boardId={board.id} />}</ClientOnly>
+          </Suspense>
+        </ActivityContent>
+        <ActivitySidebar>
+          <RoomChat />
+        </ActivitySidebar>
+      </ActivityLayout>
+    </RoomChatStoreProvider>
   );
 }

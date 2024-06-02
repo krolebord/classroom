@@ -1,0 +1,31 @@
+.activity-container {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "content"
+    "sidebar";
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+}
+
+@media (min-width: 1024px) {
+  .activity-container {
+    grid-template-areas:
+      "header header"
+      "content sidebar";
+    grid-template-columns: 1fr 256px;
+    grid-template-rows: auto 1fr;
+  }
+}
+
+.activity-container .activity-header {
+  grid-area: header;
+}
+
+.activity-container .activity-content {
+  grid-area: content;
+}
+
+.activity-container .activity-sidebar {
+  grid-area: sidebar;
+}

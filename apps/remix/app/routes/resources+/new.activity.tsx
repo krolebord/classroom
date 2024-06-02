@@ -46,7 +46,7 @@ export const action = unstable_defineAction(
         name,
         createdById: user.id,
       });
-      return redirect(`/document/${id}`);
+      return redirect(`/${id}/document`);
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     } else if (type === "board") {
       const id = crypto.randomUUID();
@@ -55,7 +55,7 @@ export const action = unstable_defineAction(
         name,
         createdById: user.id,
       });
-      return redirect(`/board/${id}`);
+      return redirect(`/${id}/board`);
     }
 
     const invalidType = type satisfies never;
@@ -98,7 +98,7 @@ export function NewActivityButton(props: NewActivityButtonProps) {
       <PopoverContent
         align="start"
         alignOffset={10}
-        className="z-[999] w-auto max-w-64"
+        className="w-auto max-w-64"
       >
         <fetcher.Form
           {...getFormProps(form)}

@@ -23,6 +23,8 @@ bucket = "./build/client"
 [build]
 command = "pnpm run build"
 
+[vars]
+ROOMS_COUNTER_SINGLETON_ID = "rooms-counter"
 
 [[d1_databases]]
 binding = "DB"

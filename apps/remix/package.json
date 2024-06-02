@@ -26,9 +26,11 @@
     "@remix-run/react": "^2.9.2",
     "@remix-run/server-runtime": "*",
     "cachified-adapter-cloudflare-kv": "^2.2.1",
+    "date-fns": "^3.6.0",
     "isbot": "^4.1.0",
     "lucide-react": "^0.379.0",
     "miniflare": "^3.20240512.0",
+    "partysocket": "^1.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "remix-auth": "^3.6.0",
@@ -37,7 +39,8 @@
     "tiny-invariant": "^1.3.3",
     "tldraw": "^2.1.4",
     "y-utility": "^0.1.4",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@classroom/auth-service": "workspace:*",
@@ -45,6 +48,7 @@
     "@classroom/prettier-config": "workspace:*",
     "@classroom/tailwind-config": "workspace:*",
     "@classroom/tsconfig": "workspace:*",
+    "@classroom/ws-server": "workspace:*",
     "@cloudflare/workers-types": "^4.20240512.0",
     "@remix-run/dev": "^2.9.2",
     "@total-typescript/ts-reset": "^0.5.1",

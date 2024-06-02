@@ -10,6 +10,7 @@ import {
 import { unstable_defineLoader } from "@remix-run/server-runtime";
 
 import tailwind from "./tailwind.css?url";
+import { getClientEnv } from "./utils/env";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwind },
@@ -17,8 +18,9 @@ export const links: LinksFunction = () => [
 
 export const loader = unstable_defineLoader(async ({ context }) => {
   const session = await context.auth.getOptionalSession();
+  const clientEnv = getClientEnv(context.env);
 
-  return { session };
+  return { session, clientEnv };
 });
 
 export function useRootLoaderData() {
@@ -41,6 +43,10 @@ export function useSession() {
 
 export function useUser() {
   return useSession().user;
+}
+
+export function useClientEnv() {
+  return useRootLoaderData().clientEnv;
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

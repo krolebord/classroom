@@ -4,23 +4,31 @@ import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import { unstable_defineLoader } from "@remix-run/server-runtime";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import {
+  ArrowUpIcon,
   ImageIcon,
   MenuIcon,
   NotebookPenIcon,
   PlusCircleIcon,
   XIcon,
 } from "lucide-react";
+import { usePartySocket } from "partysocket/react";
 
 import { desc, sql, unionAll } from "@classroom/db";
 import { Board, Document } from "@classroom/db/schema";
 import { cn } from "@classroom/ui";
 import { Avatar, AvatarFallback } from "@classroom/ui/avatar";
+import { Button } from "@classroom/ui/button";
+import { Input } from "@classroom/ui/input";
 import { Separator } from "@classroom/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@classroom/ui/sheet";
 
 import { Logo } from "~/components/logo";
+import {
+  RoomScounterHandler,
+  useRoomsCounter,
+} from "~/components/rooms-counter";
 import { TldrawProvider } from "~/components/tldraw-context";
-import { useUser } from "~/root";
+import { useClientEnv, useUser } from "~/root";
 import { NewActivityButton } from "../resources+/new.activity";
 
 type ActivityType = "board" | "document";
@@ -56,10 +64,11 @@ export const loader = unstable_defineLoader(async ({ context }) => {
         ({
           to:
             item.type === "board"
-              ? `/board/${item.id}`
-              : `/document/${item.id}`,
+              ? `/${item.id}/board`
+              : `/${item.id}/document`,
           title: item.name,
           icon: item.type === "board" ? "board" : "document",
+          roomId: item.id,
         }) satisfies NavItemProps,
     ),
   };
@@ -67,27 +76,30 @@ export const loader = unstable_defineLoader(async ({ context }) => {
 
 function getNavItemIcon(icon: NavItemProps["icon"]) {
   if (icon === "board") {
-    return <ImageIcon className="h-4 w-4" />;
+    return <ImageIcon className="h-4 w-4 min-w-fit" />;
   }
   if (icon === "document") {
-    return <NotebookPenIcon className="h-4 w-4" />;
+    return <NotebookPenIcon className="h-4 w-4 min-w-fit" />;
   }
   return icon as ReactNode;
 }
 
 type NavItemProps = {
   to: string;
+  roomId?: string;
   title: string;
   icon: "board" | "document" | Omit<React.ReactNode, string>;
 };
 function NavItem(props: NavItemProps) {
-  const { to, icon, title } = props;
+  const { to, icon, title, roomId } = props;
+
+  const counts = useRoomsCounter((x) => (roomId ? x[roomId] : null));
 
   return (
     <NavLink
       className={({ isActive }) =>
         cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-gray-900  dark:hover:text-gray-50",
+          "flex items-center justify-between gap-3 rounded-lg px-3 py-2  transition-all hover:text-gray-900  dark:hover:text-gray-50",
           isActive
             ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
             : "text-gray-500 dark:text-gray-400",
@@ -95,27 +107,26 @@ function NavItem(props: NavItemProps) {
       }
       to={to}
     >
-      {getNavItemIcon(icon)}
-      {title}
+      <div className="flex flex-row items-center gap-3 overflow-hidden">
+        {getNavItemIcon(icon)}
+        <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+          {title}
+        </p>
+      </div>
+
+      {!!counts && (
+        <div className="flex items-center gap-1">
+          <div className="h-2 w-2 rounded-full bg-primary" />
+          <span className="text-xs">{counts}</span>
+        </div>
+      )}
     </NavLink>
   );
 }
 
-type SidebarProps = {
-  items: NavItemProps[];
-};
-function Sidebar(props: SidebarProps) {
-  const { items } = props;
-
+function Sidebar() {
   const user = useUser();
-
-  const nav = (
-    <nav className="flex flex-col items-stretch px-4 text-sm font-medium">
-      {items.map((item) => (
-        <NavItem key={item.to} {...item} />
-      ))}
-    </nav>
-  );
+  const { navItems } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -133,7 +144,7 @@ function Sidebar(props: SidebarProps) {
         <div className="px-6 py-2">
           <Separator />
         </div>
-        {nav}
+        <SidebarActivities items={navItems} />
         <div className="px-6 py-2">
           <Separator />
         </div>
@@ -165,7 +176,7 @@ function Sidebar(props: SidebarProps) {
             <div className="px-6 py-2">
               <Separator />
             </div>
-            {nav}
+            <SidebarActivities items={navItems} />
             <div className="px-6 py-2">
               <Separator />
             </div>
@@ -186,88 +197,32 @@ function Sidebar(props: SidebarProps) {
   );
 }
 
-export default function () {
-  const { navItems } = useLoaderData<typeof loader>();
+type SidebarActivitiesProps = {
+  items: NavItemProps[];
+};
+export function SidebarActivities(props: SidebarActivitiesProps) {
+  const { items } = props;
+
   return (
-    <div className="flex min-h-screen w-full flex-col overflow-hidden lg:flex-row">
-      <Sidebar items={navItems} />
-      <main className="overflow-x-hidde min-h-screen w-full overflow-y-auto">
+    <nav className="flex flex-col items-stretch px-4 text-sm font-medium">
+      {items.map((item) => (
+        <NavItem key={item.to} {...item} />
+      ))}
+    </nav>
+  );
+}
+
+export default function () {
+  return (
+    <div className="flex min-h-screen w-full flex-col lg:flex-row">
+      <Sidebar />
+      <RoomScounterHandler />
+      <main className="h-full min-h-screen w-full">
         <TldrawProvider>
           <Outlet />
         </TldrawProvider>
       </main>
-      {/* <div className="flex flex-col">
-        <div className="flex h-[60px] items-center border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
-          <h1 className="text-lg font-semibold">Drawing Board</h1>
-        </div>
-        <div className="flex-1 overflow-auto">
-          <div className="h-full w-full bg-gray-100 dark:bg-gray-950" />
-        </div>
-      </div> */}
-      {/* <div className="hidden border-l bg-gray-100/40 dark:bg-gray-800/40 lg:block">
-        <div className="flex h-[60px] items-center border-b px-6">
-          <h2 className="text-lg font-semibold">Chat</h2>
-        </div>
-        <div className="flex-1 overflow-auto">
-          <div className="grid gap-4 p-4">
-            <div className="flex items-start gap-4">
-              <Avatar className="h-8 w-8 border">
-                <AvatarImage alt="Image" src="/placeholder-user.jpg" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <div className="font-medium">John Doe</div>
-                <div className="prose prose-stone">
-                  <p>Hey, let's start collaborating on this project!</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <Avatar className="h-8 w-8 border">
-                <AvatarImage alt="Image" src="/placeholder-user.jpg" />
-                <AvatarFallback>JS</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <div className="font-medium">Jane Smith</div>
-                <div className="prose prose-stone">
-                  <p>Great idea! I'm ready to start brainstorming.</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <Avatar className="h-8 w-8 border">
-                <AvatarImage alt="Image" src="/placeholder-user.jpg" />
-                <AvatarFallback>MB</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <div className="font-medium">Michael Brown</div>
-                <div className="prose prose-stone">
-                  <p>I have some ideas to share. Let's discuss them.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="sticky bottom-0 border-t bg-gray-100/40 p-4 dark:bg-gray-800/40">
-          <div className="relative">
-            <Textarea
-              className="min-h-[48px] resize-none rounded-2xl border border-gray-200 border-neutral-400 p-4 pr-16 shadow-sm dark:border-gray-800"
-              id="message"
-              name="message"
-              placeholder="Type your message..."
-              rows={1}
-            />
-            <Button
-              className="absolute right-3 top-3 h-8 w-8"
-              size="icon"
-              type="submit"
-            >
-              <ArrowUpIcon className="h-4 w-4" />
-              <span className="sr-only">Send</span>
-            </Button>
-          </div>
-        </div>
-      </div> */}
+
       {/* <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
         <div className="flex -space-x-2">
           <Avatar className="h-8 w-8 border">

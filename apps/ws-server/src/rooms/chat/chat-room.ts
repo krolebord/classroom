@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 
 import type { UserConnection } from "../../utils/auth.js";
 import type { RoomInfoUpdateRequest } from "../rooms-counter.js";
-import type { Message, UserMessage } from "./messages.js";
+import type { Message, Participant, UserMessage } from "./messages.js";
 import {
   authorizeUserSocketRequest,
   setUserConnectionState,
@@ -17,12 +17,14 @@ import { ROOMS_COUNTER_SINGLETON_ID } from "../rooms-counter.js";
 import {
   editMessage,
   newMessage,
+  participantsSyncMessage,
   syncMessage,
   systemMessage,
 } from "./messages.js";
 
 export default class ChatRoomServer implements Party.Server {
   messages: Message[] = [];
+  participants: Participant[] = [];
   messagesLoaded = false;
 
   constructor(public room: Party.Room) {}
@@ -50,10 +52,11 @@ export default class ChatRoomServer implements Party.Server {
   ) {
     setUserConnectionState(connection, request);
 
-    await this.ensureLoadMessages();
+    await this.ensureLoadState();
+
     connection.send(syncMessage(this.messages ?? []));
 
-    this.updateRoomList("enter");
+    this.updateParticipants("enter", connection.state!.user);
   }
 
   async onMessage(messageString: string, connection: UserConnection) {
@@ -92,11 +95,11 @@ export default class ChatRoomServer implements Party.Server {
     }
   }
 
-  async onClose(_: UserConnection) {
-    this.updateRoomList("leave");
+  async onClose(connection: UserConnection) {
+    this.updateParticipants("leave", connection.state!.user);
   }
 
-  async ensureLoadMessages() {
+  async ensureLoadState() {
     if (!this.messagesLoaded) {
       this.messagesLoaded = true;
       this.messages =
@@ -105,8 +108,23 @@ export default class ChatRoomServer implements Party.Server {
     return this.messages;
   }
 
-  async updateRoomList(action: "enter" | "leave") {
-    return getParty(
+  async updateParticipants(
+    action: "enter" | "leave",
+    participant: Participant,
+  ) {
+    if (action === "enter") {
+      if (!this.participants.find((p) => p.id === participant.id)) {
+        this.participants.push(participant);
+      }
+    } else {
+      this.participants = this.participants.filter(
+        (p) => p.id !== participant.id,
+      );
+    }
+
+    this.room.broadcast(participantsSyncMessage(this.participants));
+
+    await getParty(
       this.room.context,
       "rooms_counter",
       ROOMS_COUNTER_SINGLETON_ID,
@@ -116,7 +134,7 @@ export default class ChatRoomServer implements Party.Server {
         tokenOrEnv: this.room.env,
         data: {
           id: this.room.id,
-          connections: [...this.room.getConnections()].length,
+          connections: this.participants.length,
           action,
         },
       }),
