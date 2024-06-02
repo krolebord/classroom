@@ -8,12 +8,7 @@
     "board": "src/rooms/board.ts"
   },
   "compatibilityDate": "2024-05-12",
-  "vars": {
-    "INTERNAL_TOKEN": "test-12345"
-  },
   "bindings": {
-    "services": {
-      "AUTH": "classroom-service-auth"
-    }
+    "services": {}
   }
 }

@@ -26,10 +26,8 @@ export default class YjsServer implements Party.Server {
 
   static async onBeforeRequest(request: Party.Request, lobby: Party.Lobby) {
     return (
-      (await authorizeUserSocketRequest(
-        request,
-        lobby.bindings.services.AUTH,
-      )) ?? new Response("Unauthorized", { status: 401 })
+      (await authorizeUserSocketRequest(request, lobby.env)) ??
+      new Response("Unauthorized", { status: 401 })
     );
   }
 
@@ -43,10 +41,8 @@ export default class YjsServer implements Party.Server {
 
   static async onBeforeConnect(request: Party.Request, lobby: Party.Lobby) {
     return (
-      (await authorizeUserSocketRequest(
-        request,
-        lobby.bindings.services.AUTH,
-      )) ?? new Response("Unauthorized", { status: 401 })
+      (await authorizeUserSocketRequest(request, lobby.env)) ??
+      new Response("Unauthorized", { status: 401 })
     );
   }
 

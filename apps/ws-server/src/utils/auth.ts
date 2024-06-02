@@ -1,6 +1,9 @@
-import type { Connection, Request } from "partykit/server";
+import type { Connection, PartyEnv, Request } from "partykit/server";
 
-import type { AuthService, VeirfiedUser } from "@classroom/auth-service";
+import type {
+  AuthResponseContent,
+  VeirfiedUser,
+} from "@classroom/auth-service";
 
 export const authHeader = "X-Auth-User";
 
@@ -10,7 +13,7 @@ export type UserConnection = Connection<UserConnectionState>;
 
 export async function authorizeUserSocketRequest(
   request: Request,
-  authService: AuthService,
+  env: PartyEnv,
 ) {
   try {
     const token = new URL(request.url).searchParams.get("token") ?? "";
@@ -18,12 +21,17 @@ export async function authorizeUserSocketRequest(
       return null;
     }
 
-    const session = await authService.verifySession(token);
-    if (!session || !session.sessionToken) {
+    const resp = await fetch(`${env.AUTH_SERVICE_URL}/${token}`, {
+      method: "GET",
+    });
+
+    const result = (await resp.json()) as AuthResponseContent;
+
+    if (result.type === "error" || !result.session.sessionToken) {
       return null;
     }
 
-    request.headers.set(authHeader, JSON.stringify(session.user));
+    request.headers.set(authHeader, JSON.stringify(result.session.user));
 
     return request;
   } catch (e) {
