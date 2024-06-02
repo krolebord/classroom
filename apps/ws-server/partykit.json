@@ -4,7 +4,8 @@
   "main": "src/main.ts",
   "parties": {
     "rooms_counter": "src/rooms/rooms-counter.ts",
-    "chat": "src/rooms/chat/chat-room.ts"
+    "chat": "src/rooms/chat/chat-room.ts",
+    "board": "src/rooms/board.ts"
   },
   "compatibilityDate": "2024-05-12",
   "vars": {

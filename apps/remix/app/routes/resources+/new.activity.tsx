@@ -98,7 +98,7 @@ export function NewActivityButton(props: NewActivityButtonProps) {
       <PopoverContent
         align="start"
         alignOffset={10}
-        className="w-auto max-w-64"
+        className="z-[999] w-auto max-w-64"
       >
         <fetcher.Form
           {...getFormProps(form)}

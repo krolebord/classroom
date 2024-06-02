@@ -19,6 +19,7 @@ import { Separator } from "@classroom/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@classroom/ui/sheet";
 
 import { Logo } from "~/components/logo";
+import { TldrawProvider } from "~/components/tldraw-context";
 import { useUser } from "~/root";
 import { NewActivityButton } from "../resources+/new.activity";
 
@@ -118,7 +119,7 @@ function Sidebar(props: SidebarProps) {
 
   return (
     <>
-      <aside className="hidden min-w-64 border-r bg-gray-100/40 dark:bg-gray-800/40 lg:block">
+      <aside className="hidden min-w-48 border-r bg-gray-100/40 dark:bg-gray-800/40 lg:block">
         <div className="flex h-14 items-center px-6">
           <Logo to="/" />
         </div>
@@ -191,7 +192,9 @@ export default function () {
     <div className="flex min-h-screen w-full flex-col overflow-hidden lg:flex-row">
       <Sidebar items={navItems} />
       <main className="overflow-x-hidde min-h-screen w-full overflow-y-auto">
-        <Outlet />
+        <TldrawProvider>
+          <Outlet />
+        </TldrawProvider>
       </main>
       {/* <div className="flex flex-col">
         <div className="flex h-[60px] items-center border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">

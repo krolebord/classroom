@@ -16,7 +16,9 @@ export default class YjsServer implements Party.Server {
   getOpts() {
     // options must match when calling unstable_getYDoc and onConnect
     const opts: YPartyKitOptions = {
-      persist: true,
+      persist: {
+        mode: "snapshot",
+      },
       callback: { handler: (doc) => this.handleYDocChange(doc) },
     };
     return opts;

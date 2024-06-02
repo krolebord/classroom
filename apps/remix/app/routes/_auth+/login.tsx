@@ -108,7 +108,7 @@ export default function LoginForm() {
             errors={form.errors}
           >
             <Input
-              placeholder="m@example.com"
+              placeholder="********"
               {...getInputProps(fields.password, { type: "password" })}
             />
           </FieldWrapper>

@@ -149,7 +149,7 @@ export default function () {
             labelProps={{ tooltip: "Password" }}
           >
             <Input
-              placeholder="m@example.com"
+              placeholder="********"
               {...getInputProps(fields.password, { type: "password" })}
               autoComplete="off"
             />
@@ -159,7 +159,7 @@ export default function () {
             labelProps={{ tooltip: "Confirm Password" }}
           >
             <Input
-              placeholder="m@example.com"
+              placeholder="********"
               {...getInputProps(fields.confirmPassword, { type: "password" })}
             />
           </FieldWrapper>
