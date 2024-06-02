@@ -114,7 +114,6 @@ export function RoomChat() {
     onMessage: (event) => {
       if (typeof event.data !== "string") return;
       const message = JSON.parse(event.data) as ChatMessage;
-      console.log("message", message);
 
       switch (message.type) {
         case "new":
@@ -235,9 +234,9 @@ export function RoomChatHeader(props: RoomChatHeaderProps) {
         <TooltipProvider>
           <div className="flex -space-x-2">
             {participants.map((participant) => (
-              <Tooltip>
+              <Tooltip key={participant.id}>
                 <TooltipTrigger asChild>
-                  <Avatar key={participant.id} className="h-8 w-8">
+                  <Avatar className="h-8 w-8">
                     <AvatarFallback className="border">
                       {participant.name.substring(0, 2)}
                     </AvatarFallback>

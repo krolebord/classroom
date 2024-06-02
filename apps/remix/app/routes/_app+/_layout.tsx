@@ -1,6 +1,6 @@
 import type React from "react";
 import type { ReactNode } from "react";
-import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import { unstable_defineLoader } from "@remix-run/server-runtime";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import {
@@ -15,6 +15,14 @@ import { desc, sql, unionAll } from "@classroom/db";
 import { Board, Document } from "@classroom/db/schema";
 import { cn } from "@classroom/ui";
 import { Avatar, AvatarFallback } from "@classroom/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@classroom/ui/dropdown-menu";
 import { Separator } from "@classroom/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@classroom/ui/sheet";
 
@@ -23,8 +31,8 @@ import {
   RoomScounterHandler,
   useRoomsCounter,
 } from "~/components/rooms-counter";
-import { TldrawProvider } from "~/components/tldraw-context";
 import { useUser } from "~/root";
+import { useLogoutFetcher } from "../resources+/auth+/logout";
 import { NewActivityButton } from "../resources+/new.activity";
 
 type ActivityType = "board" | "document";
@@ -120,8 +128,35 @@ function NavItem(props: NavItemProps) {
   );
 }
 
-function Sidebar() {
+type UserProfileProps = {
+  className?: string;
+};
+function UserProfile(props: UserProfileProps) {
+  const { className } = props;
   const user = useUser();
+
+  const logoutFetcher = useLogoutFetcher();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className={cn("flex items-center gap-2", className)}>
+        <Avatar className="border">
+          <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
+        </Avatar>
+        {user.name}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => logoutFetcher.submit()}>
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function Sidebar() {
   const { navItems } = useLoaderData<typeof loader>();
 
   return (
@@ -131,12 +166,7 @@ function Sidebar() {
           <Logo to="/" />
         </div>
         <div className="h-2"></div>
-        <Link className="flex items-center gap-2 px-4" to="/profile">
-          <Avatar className="border">
-            <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
-          </Avatar>
-          {user.name}
-        </Link>
+        <UserProfile className="w-full px-4" />
         <div className="px-6 py-2">
           <Separator />
         </div>
@@ -145,19 +175,14 @@ function Sidebar() {
           <Separator />
         </div>
         <NewActivityButton>
-          <button className="flex items-center gap-3 rounded-lg px-3 py-2  text-gray-500 transition-all  hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+          <button className="flex items-center gap-3 rounded-lg px-7 py-2  text-gray-500 transition-all  hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
             <PlusCircleIcon className="h-4 w-4" />
             New Activity
           </button>
         </NewActivityButton>
       </aside>
       <div className="flex min-h-14 w-full flex-row items-center justify-between border-b bg-gray-100/40 px-6 dark:bg-gray-800/40 lg:hidden">
-        <Link className="flex items-center gap-2" to="/profile">
-          <Avatar className="border">
-            <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
-          </Avatar>
-          {user.name}
-        </Link>
+        <UserProfile />
         <Sheet>
           <SheetTrigger asChild>
             <button>
@@ -177,7 +202,7 @@ function Sidebar() {
               <Separator />
             </div>
             <NewActivityButton>
-              <button className="flex w-full items-center gap-3 rounded-lg px-6 py-2  text-gray-500 transition-all  hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+              <button className="flex w-full items-center gap-3 rounded-lg px-7 py-2  text-gray-500 transition-all  hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
                 <PlusCircleIcon className="h-4 w-4" />
                 New Activity
               </button>
@@ -214,9 +239,7 @@ export default function () {
       <Sidebar />
       <RoomScounterHandler />
       <main className="h-full min-h-screen w-full">
-        <TldrawProvider>
-          <Outlet />
-        </TldrawProvider>
+        <Outlet />
       </main>
     </div>
   );

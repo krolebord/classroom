@@ -25,7 +25,7 @@ import * as Y from "yjs";
 
 import { useSession } from "~/root";
 
-export function useYjsStore({
+export function useTldrawYjsStore({
   hostUrl,
   version = 1,
   roomId,

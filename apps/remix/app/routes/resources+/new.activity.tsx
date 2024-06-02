@@ -145,7 +145,6 @@ function TypeToggle(props: TypeToggleProps) {
       variant="primary"
       value={control.value}
       onValueChange={(value) => {
-        console.log(value);
         control.change(value);
       }}
     >
