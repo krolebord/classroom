@@ -22,7 +22,6 @@ export default function Board(props: BoardProps) {
   const handleMount = (editor: Editor) => {
     setEditor(editor);
     editor.user.updateUserPreferences({
-      id: user.id,
       name: user.name,
     });
     editor.store.put([
